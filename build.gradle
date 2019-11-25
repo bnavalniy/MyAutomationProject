@@ -1,0 +1,33 @@
+plugins {
+    id 'java-library'
+    id "io.qameta.allure" version "2.5"
+}
+
+ext {
+    junitJupiterVersion = '5.2.0'
+}
+
+dependencies {
+    implementation 'com.codeborne:selenide:5.0.0'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+}
+
+test {
+    def forks = project.findProperty('forks') ?: 1
+    def tags = project.findProperty("tags") ?: "all"
+
+    maxParallelForks = forks as int
+
+    useJUnitPlatform { includeTags = (tags as String).split(',') }
+
+    testLogging {
+        events 'standardOut', 'passed', 'skipped', 'failed'
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+apply from: "$rootDir/gradle/allure.gradle"
